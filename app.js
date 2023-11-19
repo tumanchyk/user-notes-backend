@@ -1,8 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
-const checkAuth = require('./middleware/checkAuth');
-
+const { checkAdmin, checkAuth } = require('./middleware');
 const { Task, User } = require('./models')
 const app = express();
     
@@ -74,7 +73,7 @@ app.get("/tasks/:id", checkAuth, async (req, res) => {
     }
 });
 
-app.post("/tasks", checkAuth, async (req, res) => {
+app.post("/tasks", checkAuth, checkAdmin, async (req, res) => {
     try {
         const newTask = req.body;
         const task = await Task.create({
@@ -92,7 +91,7 @@ app.post("/tasks", checkAuth, async (req, res) => {
     }
 });
 
-app.put("/tasks/:id", checkAuth, async (req, res) => {
+app.put("/tasks/:id", checkAuth, checkAdmin, async (req, res) => {
     try{
     const taskId = req.params.id;
     const {name} = req.body;
@@ -108,7 +107,7 @@ app.put("/tasks/:id", checkAuth, async (req, res) => {
     }
 })
 
-app.delete("/tasks/:id", checkAuth, async (req, res) => {
+app.delete("/tasks/:id", checkAuth, checkAdmin, async (req, res) => {
     try{
         const taskId = req.params.id;
         const task = await Task.findByIdAndDelete(taskId);
