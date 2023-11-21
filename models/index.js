@@ -1,4 +1,4 @@
-const Task = require('./taskModel');
+const Place = require('./placeModel');
 const User = require('./userModel');
 
-module.exports = { Task, User };
+module.exports = { Place, User };

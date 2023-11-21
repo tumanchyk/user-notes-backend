@@ -1,17 +1,14 @@
 const { model, Schema } = require('mongoose');
+const handleMongooseError = require('../helpers/handleMongooseError')
 
 const userSchema = new Schema({
-    firstName: {
+    name: {
         type: String,
-        required: [true, 'First name is required']
-    },
-    lastName: {
-        type: String,
-        required: [true, 'Last name is required']
+        required: [true, 'Name is required']
     },
     email: {
         type: String,
-        require: [true, 'Email is required'],
+        required: [true, 'Email is required'],
         unique: true,
     },
     password: {
@@ -23,8 +20,9 @@ const userSchema = new Schema({
         enum: ["user", "admin"],
         default: "user"
     }
-
 });
+
+userSchema.post("save", handleMongooseError);
 
 const User = model('User', userSchema);
 

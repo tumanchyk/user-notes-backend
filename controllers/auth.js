@@ -24,12 +24,11 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
     try {
-        const { firstName, lastName, email, password: pass, role } = req.body;
+        const { name, email, password: pass, role } = req.body;
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(pass, salt);
         const user = await User.create({
-            firstName,
-            lastName,
+            name,
             email,
             password: hash,
             role

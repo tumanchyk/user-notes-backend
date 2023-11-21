@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { checkAdmin, checkAuth } = require('./middleware');
-const { login, register, getAllTasks, getTaskById, createTask, updatedTask, deleteTask } = require('./controllers');
+const { checkAuth } = require('./middleware');
+const { login, register, getAllPlaces, getPlaceById, createPlace, updatedPlace, deletePlace } = require('./controllers');
 
 const app = express();
     
@@ -12,14 +12,14 @@ app.post("/login", login);
 
 app.post("/register", register);
 
-app.get("/tasks", checkAuth, getAllTasks);
+app.get("/places", checkAuth, getAllPlaces);
 
-app.get("/tasks/:id", checkAuth, getTaskById);
+app.get("/places/:id", checkAuth, getPlaceById);
 
-app.post("/tasks", checkAuth, checkAdmin, createTask);
+app.post("/places", checkAuth, createPlace);
 
-app.put("/tasks/:id", checkAuth, checkAdmin, updatedTask)
+app.put("/places/:id", checkAuth, updatedPlace)
 
-app.delete("/tasks/:id", checkAuth, checkAdmin, deleteTask)
+app.delete("/places/:id", checkAuth, deletePlace)
 
 module.exports = app;

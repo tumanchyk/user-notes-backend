@@ -1,4 +1,4 @@
 const { login, register } = require('./auth');
-const { getAllTasks, getTaskById, createTask, updatedTask, deleteTask } = require('./tasks');
+const { getAllPlaces, getPlaceById, createPlace, updatedPlace, deletePlace } = require('./places');
 
-module.exports = { login, register, getAllTasks, getTaskById, createTask, updatedTask, deleteTask };
+module.exports = { login, register, getAllPlaces, getPlaceById, createPlace, updatedPlace, deletePlace };
