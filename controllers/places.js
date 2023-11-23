@@ -1,8 +1,9 @@
 const { Place } = require('../models');
 
 const getAllPlaces = async (req, res) => {
-    try{
-        const places = await Place.find();
+    try {
+        const { _id: owner } = req.user;
+        const places = await Place.find({owner});
         return res.status(200).json(places);
     } catch (err) {
         console.log(err);
@@ -26,14 +27,9 @@ const getPlaceById = async (req, res) => {
 
 const createPlace = async (req, res) => {
     try {
-        const {country, places, date, overview, isVisited} = req.body;
-        const place = await Place.create({
-            country,
-            places,
-            date,
-            overview,
-            isVisited
-        });
+        const { _id: owner } = req.user;
+        const data = req.body;
+        const place = await Place.create({...data, owner });
 
         if (!place) {
         return res.status(404).json({message: 'Place not created'})
@@ -62,12 +58,13 @@ const updatedPlace = async (req, res) => {
 }
 
 const deletePlace = async (req, res) => {
-    try{
+    try {
         const placeId = req.params.id;
         const place = await Place.findByIdAndDelete(placeId);
         if (!place) {
         return res.status(404).json({message: 'Place not deleted'})
         }
+        console.log(place);
         return res.status(204).send();
     } catch (err) {
         console.log(err);

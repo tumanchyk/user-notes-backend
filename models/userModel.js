@@ -19,8 +19,12 @@ const userSchema = new Schema({
         type: String,
         enum: ["user", "admin"],
         default: "user"
-    }
-});
+    },
+    token: {
+    type: String,
+    default: ""
+  }
+}, { versionKey: false, timestamps: true });
 
 userSchema.post("save", handleMongooseError);
 

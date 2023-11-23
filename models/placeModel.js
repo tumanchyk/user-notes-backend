@@ -18,8 +18,14 @@ const placeSchema = new Schema({
     isVisited: {
         type: Boolean,
         default: false
+    },
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: "places",
+        require: true
     }
-})
+
+}, { versionKey: false, timestamps: true })
 
 placeSchema.post("save", handleMongooseError);
 
