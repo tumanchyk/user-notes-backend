@@ -64,8 +64,7 @@ const deletePlace = async (req, res) => {
         if (!place) {
         return res.status(404).json({message: 'Place not deleted'})
         }
-        console.log(place);
-        return res.status(204).send();
+       return res.status(204).send();
     } catch (err) {
         console.log(err);
         return res.status(500).json({error: err.message});

@@ -63,5 +63,10 @@ const logout = async (req, res) => {
     res.status(204).json({ message: "Logout success" })
 }  
 
+const current = async (req, res) => {
+    const user = req.user;
+    res.status(200).json(user);
+}  
 
-module.exports = {login, register, logout}
+
+module.exports = {login, register, logout, current}
