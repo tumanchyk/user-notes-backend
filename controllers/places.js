@@ -1,4 +1,6 @@
 const { Place } = require('../models');
+const cloudinary = require('../helpers/cloudinary')
+const fs = require('fs/promises');
 
 const getAllPlaces = async (req, res) => {
     try {
@@ -26,10 +28,13 @@ const getPlaceById = async (req, res) => {
 }
 
 const createPlace = async (req, res) => {
+    const { path: oldPath } = req.file;
+    const fileData = await cloudinary.uploader.upload(oldPath, { folder: "media" });
+    await fs.unlink(oldPath);
     try {
         const { _id: owner } = req.user;
         const data = req.body;
-        const place = await Place.create({...data, owner });
+        const place = await Place.create({...data, owner, image: fileData.url });
 
         if (!place) {
         return res.status(404).json({message: 'Place not created'})
@@ -45,8 +50,11 @@ const createPlace = async (req, res) => {
 const updatedPlace = async (req, res) => {
     try{
     const placeId = req.params.id;
-    const {country, places, date, overview, isVisited} = req.body;
-    const updatedPlace = await Place.findByIdAndUpdate(placeId, { country, places, date, overview, isVisited }, { new: true });
+    const { country, places, date, overview, isVisited } = req.body;
+    const { path: oldPath } = req.file;
+    const fileData = await cloudinary.uploader.upload(oldPath, { folder: "media" });
+    await fs.unlink(oldPath);
+    const updatedPlace = await Place.findByIdAndUpdate(placeId, { country, places, date, overview, isVisited, image: fileData.url }, { new: true });
     if (!updatedPlace) {
     return res.status(404).json({message: 'Place not updated'})
     }

@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require('cors')
 
 const bodyParser = require("body-parser");
-const { checkAuth } = require('./middleware');
+const { checkAuth, uploader } = require('./middleware');
 const { login, register, logout, current, getAllPlaces, getPlaceById, createPlace, updatedPlace, deletePlace } = require('./controllers');
 
 const app = express();
@@ -24,9 +24,9 @@ app.get("/places",  getAllPlaces);
 
 app.get("/places/:id",  getPlaceById);
 
-app.post("/places",  createPlace);
+app.post("/places",  uploader.single("image"), createPlace);
 
-app.put("/places/:id",  updatedPlace)
+app.put("/places/:id", uploader.single("image"), updatedPlace)
 
 app.delete("/places/:id",  deletePlace)
 

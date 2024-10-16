@@ -4,7 +4,7 @@ const handleMongooseError = require('../helpers/handleMongooseError');
 const placeSchema = new Schema({
     country: {
         type: String,
-        required: [true, "Task description is required"]
+        required: [true, "Country is required"]
     },
     places:{
         type: String,
@@ -18,6 +18,9 @@ const placeSchema = new Schema({
     isVisited: {
         type: Boolean,
         default: false
+    },
+    image: {
+        type: String,
     },
     owner: {
         type: Schema.Types.ObjectId,
