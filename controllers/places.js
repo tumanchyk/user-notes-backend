@@ -39,14 +39,28 @@ const createPlace = async (req, res) => {
         if (!place) {
         return res.status(404).json({message: 'Place not created'})
         }
-        if (!fileData) {
-        return res.status(404).json({message: 'Image not uploaded'})
+        if (!fileData || !fileData.url) {
+            throw new Error("Image upload to Cloudinary failed");
         }
 
         return res.status(201).json({ place });
     } catch (err) {
-        console.log(err);
-         return res.status(500).json({error: err.message});
+          console.error("Error creating place:", err);
+
+        // Log more specific error details
+        if (err.response) {
+            // Cloudinary or external API error
+            console.error("Cloudinary Error:", err.response.data);
+            return res.status(500).json({ error: "Cloudinary error", details: err.response.data });
+        } else if (err.request) {
+            // Request was made, but no response
+            console.error("No response received from Cloudinary");
+            return res.status(500).json({ error: "No response from Cloudinary" });
+        } else {
+            // Internal server error or some other error
+            console.error("Server error:", err.message);
+            return res.status(500).json({ error: "Server error", message: err.message });
+        }
     }
 }
 
