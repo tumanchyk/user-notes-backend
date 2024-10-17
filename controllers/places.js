@@ -28,16 +28,19 @@ const getPlaceById = async (req, res) => {
 }
 
 const createPlace = async (req, res) => {
-    const { path: oldPath } = req.file;
-    const fileData = await cloudinary.uploader.upload(oldPath, { folder: "media" });
-    await fs.unlink(oldPath);
     try {
+        const { path: oldPath } = req.file;
         const { _id: owner } = req.user;
         const data = req.body;
+        const fileData = await cloudinary.uploader.upload(oldPath, { folder: "media" });
+        await fs.unlink(oldPath);
         const place = await Place.create({...data, owner, image: fileData.url });
 
         if (!place) {
         return res.status(404).json({message: 'Place not created'})
+        }
+        if (!fileData) {
+        return res.status(404).json({message: 'Image not uploaded'})
         }
 
         return res.status(201).json({ place });
