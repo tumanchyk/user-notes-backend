@@ -1,6 +1,7 @@
 const { Place } = require('../models');
 const cloudinary = require('../helpers/cloudinary')
 const fs = require('fs/promises');
+require("dotenv").config();
 
 const getAllPlaces = async (req, res) => {
     try {
@@ -34,10 +35,10 @@ const createPlace = async (req, res) => {
         const data = req.body;
         const fileData = await cloudinary.uploader.upload(oldPath, { folder: "media" });
         await fs.unlink(oldPath);
-        const place = await Place.create({...data, owner, image: fileData.url });
+        const place = await Place.create({ ...data, owner, image: fileData.url });
 
         if (!place) {
-        return res.status(404).json({message: 'Place not created'})
+            return res.status(404).json({ message: 'Place not created' })
         }
         if (!fileData || !fileData.url) {
             throw new Error("Image upload to Cloudinary failed");
@@ -45,22 +46,15 @@ const createPlace = async (req, res) => {
 
         return res.status(201).json({ place });
     } catch (err) {
-          console.error("Error creating place:", err);
-
-        // Log more specific error details
-        if (err.response) {
-            // Cloudinary or external API error
-            console.error("Cloudinary Error:", err.response.data);
-            return res.status(500).json({ error: "Cloudinary error", details: err.response.data });
-        } else if (err.request) {
-            // Request was made, but no response
-            console.error("No response received from Cloudinary");
-            return res.status(500).json({ error: "No response from Cloudinary" });
-        } else {
-            // Internal server error or some other error
-            console.error("Server error:", err.message);
-            return res.status(500).json({ error: "Server error", message: err.message });
-        }
+         return res.status(500).json({
+            error: err.message,
+            stack: err.stack, 
+            response: err.response ? err.response.data : null,
+             request: err.request ? err.request : null,
+            cloudName: process.env.CLOUDINARY_CLOUD_NAME || 'Missing',
+            apiKey: process.env.CLOUDINARY_API_KEY || 'Missing',
+            apiSecret: process.env.CLOUDINARY_API_SECRET ? 'Exists' : 'Missing',
+        });
     }
 }
 
