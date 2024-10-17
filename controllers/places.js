@@ -1,7 +1,6 @@
 const { Place } = require('../models');
 const cloudinary = require('../helpers/cloudinary')
 const fs = require('fs/promises');
-require("dotenv").config();
 
 const getAllPlaces = async (req, res) => {
     try {
@@ -46,26 +45,22 @@ const createPlace = async (req, res) => {
 
         return res.status(201).json({ place });
     } catch (err) {
-         return res.status(500).json({
-            error: err.message,
-            stack: err.stack, 
-            response: err.response ? err.response.data : null,
-             request: err.request ? err.request : null,
-            cloudName: process.env.CLOUDINARY_CLOUD_NAME || 'Missing',
-            apiKey: process.env.CLOUDINARY_API_KEY || 'Missing',
-            apiSecret: process.env.CLOUDINARY_API_SECRET ? 'Exists' : 'Missing',
-        });
+        console.log(err);
+         return res.status(500).json({error: err.message});
     }
 }
 
 const updatedPlace = async (req, res) => {
     try{
     const placeId = req.params.id;
-    const { country, places, date, overview, isVisited } = req.body;
-    const { path: oldPath } = req.file;
-    const fileData = await cloudinary.uploader.upload(oldPath, { folder: "media" });
+    const { country, places, date, overview, isVisited, image } = req.body;
+    let fileData = null;
+    if (req.file) {
+        const { path: oldPath } = req.file;
+        fileData = await cloudinary.uploader.upload(oldPath, { folder: "media" });
     await fs.unlink(oldPath);
-    const updatedPlace = await Place.findByIdAndUpdate(placeId, { country, places, date, overview, isVisited, image: fileData.url }, { new: true });
+    }
+    const updatedPlace = await Place.findByIdAndUpdate(placeId, { country, places, date, overview, isVisited, image: fileData?.url || image }, { new: true });
     if (!updatedPlace) {
     return res.status(404).json({message: 'Place not updated'})
     }
